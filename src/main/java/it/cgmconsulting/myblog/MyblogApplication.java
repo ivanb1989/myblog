@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
+@EnableCaching// abilita la cache
 @OpenAPIDefinition(info = @Info(title = "MyBlog  API", version = "3.0", description = "MyBlog"))
 @SecurityScheme(
 		name = "myBlogSecurityScheme",

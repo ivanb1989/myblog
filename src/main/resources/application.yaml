@@ -41,9 +41,10 @@ logging:
   level:
     it:
       cgmconsulting:
-        myblog: info
+        myblog: debug
     org:
       springframework: info
+      cache: trace
       hibernate:
         type:
           descriptor:

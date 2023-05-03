@@ -12,11 +12,14 @@ import it.cgmconsulting.myblog.security.UserPrincipal;
 import it.cgmconsulting.myblog.service.CategoryService;
 import it.cgmconsulting.myblog.service.CommentService;
 import it.cgmconsulting.myblog.service.PostService;
+
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +28,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.cache.annotation.Cacheable;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +38,7 @@ import java.util.stream.Collectors;
 @RequestMapping("post")//http:localhost:8080/user/...
 @SecurityRequirement(name = "myBlogSecurityScheme")
 @Validated
+@Slf4j//inizializza il logger
 public class PostController{
 
 	@Value("${app.post.image.size}")
@@ -73,13 +77,16 @@ public class PostController{
 
 
 	@GetMapping("/public/boxes")
+	@Cacheable("RiquadriHomePage")//crea la cache per il boxes
 	public ResponseEntity<?> getBoxes() {
+		log.info("Retriving boxes for Home Page");
 		return new ResponseEntity<>(postService.getPostBoxes(), HttpStatus.OK);
 	}
 
 
 	@PutMapping("/publication-flow{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@CacheEvict(value = "RiquadriHomePage",allEntries = true)//cancella le cache con nome RiquadriHomePage
 	@Transactional
 	public ResponseEntity<?> publicationFlow(@PathVariable long id) {
 
@@ -130,8 +137,8 @@ public class PostController{
 		return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
 
 	}
-@Transactional
-	@PreAuthorize("hasRole('ROLE_WRITER')")
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_WRITER')") @CacheEvict(value = "RiquadriHomePage",allEntries = true)
 	@PatchMapping("/{id}")
 	public ResponseEntity<?> updatePost(@PathVariable long id, @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody @Valid PostRequest postRequest) {
 
