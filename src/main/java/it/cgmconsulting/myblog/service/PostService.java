@@ -5,9 +5,15 @@ import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.request.PostRequest;
 import it.cgmconsulting.myblog.payload.response.PostBoxesResponse;
 import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
+import it.cgmconsulting.myblog.payload.response.PostPaginationResponse;
+import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
 import it.cgmconsulting.myblog.repository.PostRepository;
 import it.cgmconsulting.myblog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -69,6 +75,25 @@ public class PostService {
 
 	public Set<String> getCategoriesByPostId(long id){
 		return postRepository.getCategoriesByPostId(id);
+	}
+
+	public PostPaginationResponse getSearchResults(
+			int pageNumber,// numero della pagina da cui partire
+			int pageSize,// numero di elementi per pagina
+			String direction,//direzione dell'ordinamento ASC,DESC
+			String sortBy, //per quale colonna effettuare l'ordimanete
+			String keyword)
+	{
+		Pageable pageable= PageRequest.of(pageNumber,pageSize, Sort.Direction.valueOf(direction.toUpperCase()), sortBy);
+		Page<PostSearchResponse> results= postRepository.getPostsByKeyword(pageable,"%"+keyword+"%");
+		PostPaginationResponse ppr = new PostPaginationResponse();
+		if(results.hasContent())
+			ppr.setPost(results.getContent());
+
+		ppr.setGetTotalPages(results.getTotalPages());
+		ppr.setGetTotalElements(results.getTotalElements());
+		return ppr;
+
 	}
 
 	/****************** CHECK SU IMMAGINE ****************/

@@ -7,12 +7,14 @@ import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.request.CategoryRequest;
 import it.cgmconsulting.myblog.payload.request.PostRequest;
 import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
+import it.cgmconsulting.myblog.payload.response.PostPaginationResponse;
 import it.cgmconsulting.myblog.security.UserPrincipal;
 import it.cgmconsulting.myblog.service.CategoryService;
 import it.cgmconsulting.myblog.service.CommentService;
 import it.cgmconsulting.myblog.service.PostService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -172,5 +174,17 @@ public class PostController{
 		return new ResponseEntity("Categories added ti post", HttpStatus.OK);
 
 	}
-
-}
+	//ricerca sui titoli dei post per parola chiave
+	@GetMapping("public/search/{keyword}")
+	public ResponseEntity<?>search(
+			@PathVariable @NotBlank String keyword,
+			@RequestParam(defaultValue = "0") int pageNumber,//valore di default per campo obbligatorio del param
+			@RequestParam(defaultValue = "2") int pageSize,
+			@RequestParam(defaultValue = "DESC")String direction,
+			@RequestParam(defaultValue = "title")String sortBy
+	) {
+		PostPaginationResponse ppr = postService.getSearchResults(pageNumber, pageSize, direction, sortBy, keyword);
+		return new
+			ResponseEntity(ppr, HttpStatus.OK);
+		}
+	}

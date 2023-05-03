@@ -3,6 +3,9 @@ package it.cgmconsulting.myblog.repository;
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.payload.response.PostBoxesResponse;
 import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
+import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,6 +40,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			"WHERE p.published = true " +
 			"ORDER BY p.updatedAt DESC" )
 	List<PostBoxesResponse> getPostBoxes();
+
+
+	@Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
+			"p.id, p.title " +
+			") FROM Post p " +
+			"WHERE p.title LIKE :keyword AND p.published = true")
+		//page oggetto iterabile
+	Page<PostSearchResponse> getPostsByKeyword(Pageable pageable, @Param("keyword") String keyword);
+
+
 
 	@Query("SELECT cat.categoryName " +
 			"FROM Post p " +

@@ -1,21 +1,18 @@
 package it.cgmconsulting.myblog.config;
 
+import it.cgmconsulting.myblog.security.CustomUserDetailsService;
+import it.cgmconsulting.myblog.security.JwtAuthenticationEntryPoint;
+import it.cgmconsulting.myblog.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import it.cgmconsulting.myblog.security.CustomUserDetailsService;
-import it.cgmconsulting.myblog.security.JwtAuthenticationEntryPoint;
-import it.cgmconsulting.myblog.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -58,8 +55,11 @@ public class SecurityConfig {
             .requestMatchers(
                     "/auth/*",
                     "/{pathvariable:[0-9A-Za-z]+}/auth/*",
+					"/{pathvariable:[0-9A-Za-z]+}/auth/**",
                     "/public/*",
+					"/public/**",
                     "/{pathvariable:[0-9A-Za-z]+}/public/*",
+					"/{pathvariable:[0-9A-Za-z]+}/public/**",
                     "/v3/api-docs/*", "/v3/api-docs", "/swagger-ui/*", "/swagger-ui/index.html",
                     "/actuator", "/actuator/*")
                 .permitAll()
