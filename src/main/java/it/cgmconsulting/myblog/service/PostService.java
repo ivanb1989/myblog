@@ -3,10 +3,7 @@ package it.cgmconsulting.myblog.service;
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.request.PostRequest;
-import it.cgmconsulting.myblog.payload.response.PostBoxesResponse;
-import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
-import it.cgmconsulting.myblog.payload.response.PostPaginationResponse;
-import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
+import it.cgmconsulting.myblog.payload.response.*;
 import it.cgmconsulting.myblog.repository.PostRepository;
 import it.cgmconsulting.myblog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,6 +92,9 @@ public class PostService {
 		return ppr;
 
 	}
+	public PostPdfResponse getByIdToPdf(long id){
+		return postRepository.getByIdToPdf(id);
+}
 
 	/****************** CHECK SU IMMAGINE ****************/
 

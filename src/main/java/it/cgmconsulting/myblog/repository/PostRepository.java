@@ -3,6 +3,7 @@ package it.cgmconsulting.myblog.repository;
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.payload.response.PostBoxesResponse;
 import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
+import it.cgmconsulting.myblog.payload.response.PostPdfResponse;
 import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	boolean existsByTitle(String title);
 	boolean existsByTitleAndIdNot(String title, long id);
 	Optional<Post> findByIdAndPublishedTrue(long id);
+
+	@Query(value="SELECT new it.cgmconsulting.myblog.payload.response.PostPdfResponse(" +
+			"p.id, " +
+			"p.title, " +
+			"p.content, " +
+			"p.image, " +
+			"p.author.username, " +
+			"p.updatedAt" +
+			") FROM Post p " +
+			"WHERE p.id= :id AND p.published=true")
+	PostPdfResponse getByIdToPdf(long id);
 
 	@Query(value="SELECT new it.cgmconsulting.myblog.payload.response.PostDetailResponse(" +
 			"p.id, " +

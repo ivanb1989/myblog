@@ -19,6 +19,7 @@
         <java.version>20</java.version>
 	</properties>
 	<dependencies>
+
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>

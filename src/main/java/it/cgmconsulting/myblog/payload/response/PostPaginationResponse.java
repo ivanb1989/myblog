@@ -8,12 +8,11 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter @Setter
-public class PostPaginationResponse{
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+public class PostPaginationResponse {
 
 	List<PostSearchResponse> post = new ArrayList<>();
 	int getTotalPages;
 	long getTotalElements;
+
 }
