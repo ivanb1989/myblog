@@ -1,0 +1,72 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: myBlog
+
+#DATABASE
+  data:
+    jpa:
+      repositories:
+        #DEFAUTL repositories controllati dall'avvio dell'applicazione
+        #DEFERRED repositories controllati dall'avvio dell'applicazione ma in maniera asincrona
+        #LAZY repositories controllati solo quando richiamati
+        bootstrap-mode: DEFAULT
+  datasource:
+     driver-class-name: com.mysql.cj.jdbc.Driver
+     url: jdbc:mysql://localhost:3306/blog?createDatabaseIfNotExist=true&autoReconnect=true&useSLL=false
+     username: root
+     password: ivan
+
+  jpa:
+    hibernate:
+      #create-drop->creazione del db all'avvio dell'applicazione e distruzione del db alla chiusura
+      #update -> modifica delle tabelle ma solo relativamente agli attributi nuovi che vengono inseriti nell'entity
+      #none-> non effettua alcuna modifica
+      #validate-> convalida lo schema del db rispetto alla mappatura delle entità
+      ddl-auto: update
+    #generate-ddl: true
+    open-in-view: false
+    properties:
+      dialect: org.hibernate.dialect.MYSQLDialect
+    show-sql: true
+  sql:
+    init:
+      #never: Non vengono eseguite le istruzioni sql presenti nel file data.sql sotto la cartella resources
+      #always: vengono SEMPRE eseguite le istruzioni sql presenti nel file data.sql sotto la cartella resources all'avvio dell'applicazione
+      mode: never
+#LOGGIN LEVEL
+logging:
+  level:
+    it:
+      cgmconsulting:
+        myblog: info
+    org:
+      springframework: info
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
+
+
+#custom properties
+app:
+  mail:
+    sender: ivanboccia@gmail.com
+    apiKey: ${CORSO_API_KEY_MAIL}
+    domain: ${CORSO_DOMAIN_MAIL}
+  # JWT Settings
+  jwtSecret: ThisIsTheSecretK3y!
+  jwtExpirationInSeconds: 36000
+  # Comma separated list of allowed origins
+  cors.allowedOrigins: \*
+  #Post image
+  post.image.path: \Users\immagini
+  post.image.extensions: jpg,jpeg,png,gif
+  #dimensione immagine 30K
+  post.image.size: 30720
+  post.image.width: 600
+  post.image.height: 300
+
