@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -97,12 +98,14 @@ public class AuthController{
 
 		//check per eventuale scandenza del ban
 		if(u.get().isEnabled()){
-			//trovare la motivazione(ovvero la severity in corso di validità) per cui è stato bannato
-			//sommare i giorni di ban ad updateAt dello User
-			//Se ban scaduto riabilito utente
-			//altrimenti lo e gli rispondo "sei bannato fino al..."
-			//nel caso in cui sia invece un nuovo utente che deve ancora confermare la propria registrazione ricordargli
-			//di guardare l'email e confermare
+			if(u.get().getEndBanOn()==null)
+				return new ResponseEntity<String>("Please confim tour registration",HttpStatus.FORBIDDEN);
+			else{
+				if(u.get().getEndBanOn().isAfter(LocalDate.now()))
+					return new ResponseEntity<String>("You are banned until "+u.get().getEndBanOn(),HttpStatus.FORBIDDEN);
+				else
+					u.get().setEnabled(true);
+			}
 		}
 
 

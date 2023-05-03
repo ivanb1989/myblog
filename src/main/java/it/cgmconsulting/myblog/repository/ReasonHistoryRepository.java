@@ -14,4 +14,7 @@ public interface ReasonHistoryRepository extends JpaRepository<ReasonHistory, Re
 
 	@Query(value="SELECT rh.reason_id FROM reason_history rh WHERE rh.end_date IS NULL ORDER BY rh.reason_id", nativeQuery = true)
 	List<String> getValidReasons();
+
+
+	List<ReasonHistory> findAllByReasonHistoryIdReasonIdOrderByReasonHistoryIdStartDateDesc(String reasonId);
 }

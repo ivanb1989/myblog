@@ -120,18 +120,44 @@ public class ReportingController{
 				break;
 			}
 			case CLOSED_WITH_BAN, PERMABAN: {
-				if(! reporting.get().getStatus().equals(ReportingStatus.OPEN)) {
-					if(status.equals(ReportingStatus.CLOSED_WITH_BAN))
-						reporting.get().setStatus(ReportingStatus.CLOSED_WITH_BAN);
-					else reporting.get().setStatus(ReportingStatus.PERMABAN);
+				LocalDate userEndBanOn = LocalDate.now();
+				Reason reason = reportingService.getValidReasonByReasonId(reporting.get().getReason().getId(), LocalDate.now());
+				//find currently active reason
+				ReasonHistory rhActive = null;
+				List<ReasonHistory> reasons = reportingService.findAllByReasonHistoryIdReasonIdOrderByReasonHistoryIdStartDateDesc(reason.getId());
+				if (reasons.size() == 0){
+					return new ResponseEntity("No reason found", HttpStatus.NOT_FOUND);
+				} else if (reasons.size() >= 2) {
+					rhActive = reasons.get(1);
+				} else {
+					rhActive = reasons.get(0);
+				}
+
+				// add days to the active ban
+				if (reporting.get().getReportingId().getComment().getAuthor().getEndBanOn() != null &&
+						!reporting.get().getReportingId().getComment().getAuthor().getEndBanOn().isBefore(LocalDate.now())) {
+					userEndBanOn = reporting.get().getReportingId().getComment().getAuthor().getEndBanOn().plusDays(rhActive.getSeverity());
+				} else {
+					// add days starting from today
+					userEndBanOn = userEndBanOn.plusDays(rhActive.getSeverity());
+				}
+				if (!reporting.get().getStatus().equals(ReportingStatus.OPEN)) {
 					Optional<Comment> c = commentService.findByIdAndCensoredFalse(commentId);
+					// Optional<Comment> c = commentService.findById(commentId); //depends on how to manage remove-ban
 					c.get().setCensored(true);
 					c.get().getAuthor().setEnabled(false);
+					//set EndBanOn
+					reporting.get().getReportingId().getComment().getAuthor().setEndBanOn(userEndBanOn);
+					if (status.equals(ReportingStatus.CLOSED_WITH_BAN)) {
+						reporting.get().setStatus(ReportingStatus.CLOSED_WITH_BAN);
+					} else {
+						reporting.get().setStatus(ReportingStatus.PERMABAN);
+					}
 				} else {
 					msg = "Illegal update from OPEN to BAN";
 					httpStatus = HttpStatus.BAD_REQUEST;
 				}
-				break;
+      break;
 			}
 			default:
 				return new ResponseEntity<>("Illegal status", HttpStatus.BAD_REQUEST);

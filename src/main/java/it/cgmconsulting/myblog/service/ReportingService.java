@@ -79,4 +79,8 @@ public class ReportingService {
 	public Optional<Reporting> findByReportingIdCommentId(long commentId) {
 		return reportingRepository.findByReportingIdCommentId(commentId);
 	}
+
+	public List<ReasonHistory> findAllByReasonHistoryIdReasonIdOrderByReasonHistoryIdStartDateDesc(String reasonId){
+		return reasonHistoryRepository.findAllByReasonHistoryIdReasonIdOrderByReasonHistoryIdStartDateDesc(reasonId);
+}
 }

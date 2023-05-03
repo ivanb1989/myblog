@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +37,8 @@ public class User extends CreationUpdate{
 	private boolean enabled=true;
 
 	private String confirmCode;
+
+	private LocalDate endBanOn;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name="user_authorities",
