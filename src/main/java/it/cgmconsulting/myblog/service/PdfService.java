@@ -19,7 +19,6 @@ public class PdfService{
 
 		PdfDocument pdf =new PdfDocument(new PdfWriter(out));//creo un documento tipo pdf dentro il quale viene scritto out
 		Document document= new Document(pdf, PageSize.A4);
-         String ll
 		//to do
 		//riportare nel pdf: title, image, content, author(username), updatedAt
 		//cercare di aggiungere anche metadati al pdf )text 7
